@@ -78,14 +78,14 @@ public class EstudiantesPanel extends Seccion {
         JPanel centro = new JPanel(new BorderLayout(0, 8));
         centro.setOpaque(false);
         centro.add(filtros, BorderLayout.NORTH);
-        centro.add(tarjeta(Tablas.conScroll(tabla)), BorderLayout.CENTER);
+        centro.add(Tablas.conScroll(tabla), BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
 
         JButton eliminar = Estilo.boton("Eliminar");
         JButton estadoCuenta = Estilo.boton("Activar / desactivar");
         JButton ficha = Estilo.boton("Ver ficha e historial");
         JButton editar = Estilo.boton("Editar");
-        JButton nuevo = Estilo.botonPrincipal("Nuevo estudiante");
+        JButton nuevo = Estilo.boton("Nuevo estudiante");
         eliminar.addActionListener(e -> eliminar());
         estadoCuenta.addActionListener(e -> cambiarEstado());
         ficha.addActionListener(e -> verFicha());

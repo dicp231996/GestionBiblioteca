@@ -20,11 +20,9 @@ public class BarraEstado extends JPanel {
     public BarraEstado() {
         super(new BorderLayout(10, 0));
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(1, 0, 0, 0, Estilo.BORDE),
-                BorderFactory.createEmptyBorder(4, 12, 4, 12)));
-        mensaje.setFont(Estilo.PEQUENA);
+                BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(2, 6, 2, 6)));
         progreso.setIndeterminate(true);
-        progreso.setPreferredSize(new Dimension(160, 14));
+        progreso.setPreferredSize(new Dimension(150, 14));
         progreso.setVisible(false);
         add(mensaje, BorderLayout.CENTER);
         add(progreso, BorderLayout.EAST);
@@ -32,20 +30,17 @@ public class BarraEstado extends JPanel {
 
     /** Muestra la barra animada: la interfaz sigue respondiendo mientras el hilo trabaja. */
     public void iniciarProceso(String texto) {
-        mensaje.setForeground(Estilo.TEXTO);
         mensaje.setText(texto);
         progreso.setVisible(true);
     }
 
     public void exito(String texto) {
         progreso.setVisible(false);
-        mensaje.setForeground(Estilo.EXITO);
         mensaje.setText(texto);
     }
 
     public void fallo(String texto) {
         progreso.setVisible(false);
-        mensaje.setForeground(Estilo.PELIGRO);
-        mensaje.setText(texto.replace('\n', ' '));
+        mensaje.setText("Error: " + texto.replace('\n', ' '));
     }
 }

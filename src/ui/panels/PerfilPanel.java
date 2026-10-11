@@ -21,7 +21,7 @@ public class PerfilPanel extends Seccion {
         ficha.setFont(Estilo.MONO);
         ficha.setEditable(false);
         ficha.setBorder(Estilo.margen(12));
-        add(tarjeta(ficha), java.awt.BorderLayout.CENTER);
+        add(new javax.swing.JScrollPane(ficha), java.awt.BorderLayout.CENTER);
     }
 
     @Override

@@ -40,20 +40,19 @@ public class MisPrestamosPanel extends Seccion {
             columna("Observación", String.class, Prestamo::getObservacion));
     private final JTable tabla = Tablas.crear(modelo, p -> p.estaActivo() && p.estaAtrasado());
     private final JLabel resumen = new JLabel();
-    private final JButton devolver = Estilo.botonPrincipal("Devolver libro");
+    private final JButton devolver = Estilo.boton("Devolver libro");
 
     public MisPrestamosPanel(PrestamoController prestamos, BarraEstado barra) {
         super("Mis préstamos", "Tus libros prestados aparecen primero. Las filas en rojo están atrasadas.");
         this.prestamos = prestamos;
         this.barra = barra;
         Tablas.anchos(tabla, 240, 150, 80, 80, 80, 140, 200);
-        resumen.setFont(Estilo.SUBTITULO);
-        resumen.setForeground(Estilo.PRIMARIO);
+        resumen.setFont(Estilo.NEGRITA);
 
         JPanel centro = new JPanel(new BorderLayout(0, 8));
         centro.setOpaque(false);
         centro.add(resumen, BorderLayout.NORTH);
-        centro.add(tarjeta(Tablas.conScroll(tabla)), BorderLayout.CENTER);
+        centro.add(Tablas.conScroll(tabla), BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
 
         devolver.addActionListener(e -> devolver());

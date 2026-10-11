@@ -85,7 +85,7 @@ public class CatalogoPanel extends Seccion {
         JPanel centro = new JPanel(new BorderLayout(0, 8));
         centro.setOpaque(false);
         centro.add(filtros, BorderLayout.NORTH);
-        centro.add(tarjeta(Tablas.conScroll(tabla)), BorderLayout.CENTER);
+        centro.add(Tablas.conScroll(tabla), BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
 
         JPanel acciones = new JPanel(new BorderLayout());
@@ -97,7 +97,7 @@ public class CatalogoPanel extends Seccion {
             JButton categoria = Estilo.boton("Nueva categoría");
             JButton eliminar = Estilo.boton("Eliminar");
             JButton editar = Estilo.boton("Editar");
-            JButton nuevo = Estilo.botonPrincipal("Nuevo libro");
+            JButton nuevo = Estilo.boton("Nuevo libro");
             categoria.addActionListener(e -> nuevaCategoria());
             eliminar.addActionListener(e -> eliminar());
             editar.addActionListener(e -> editar());
@@ -108,7 +108,7 @@ public class CatalogoPanel extends Seccion {
             botones.add(nuevo);
         } else {
             JButton detalle = Estilo.boton("Ver detalle");
-            JButton solicitar = Estilo.botonPrincipal("Solicitar préstamo");
+            JButton solicitar = Estilo.boton("Solicitar préstamo");
             detalle.addActionListener(e -> verDetalle());
             solicitar.addActionListener(e -> solicitar(solicitar));
             botones.add(detalle);

@@ -2,8 +2,10 @@ package model.transactions;
 
 import model.entities.Estudiante;
 import model.enums.EstadoPrestamo;
+import model.exceptions.ReglaNegocioException;
 import model.interfaces.Identificable;
 import model.resources.Libro;
+import util.FormatoFecha;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -86,9 +88,9 @@ public class Prestamo implements Identificable {
                 .append("Estudiante : ").append(estudiante.getNombreCompleto())
                 .append(" - ").append(estudiante.getCurso()).append('\n')
                 .append("Libro      : ").append(libro.getTitulo()).append('\n')
-                .append("Prestado   : ").append(fechaPrestamo).append('\n')
-                .append("Vence      : ").append(fechaVencimiento).append('\n')
-                .append("Devuelto   : ").append(fechaDevolucion != null ? fechaDevolucion : "-").append('\n');
+                .append("Prestado   : ").append(FormatoFecha.formatear(fechaPrestamo)).append('\n')
+                .append("Vence      : ").append(FormatoFecha.formatear(fechaVencimiento)).append('\n')
+                .append("Devuelto   : ").append(FormatoFecha.formatear(fechaDevolucion)).append('\n');
         if (estaAtrasado()) {
             sb.append("Atraso     : ").append(diasAtraso()).append(" día(s)\n");
         }

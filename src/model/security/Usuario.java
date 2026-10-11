@@ -3,45 +3,38 @@ package model.security;
 import model.enums.Rol;
 import util.TextoUtil;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
-/**
- * Credenciales de acceso. La contraseña nunca se guarda en texto plano:
- * se almacena su hash SHA-256 (como sugiere la guía de la Experiencia 3).
- */
+/** Credenciales de acceso: nombre de usuario, contraseña, rol y si la cuenta está activa. */
 public class Usuario {
 
     public static final int LARGO_MINIMO_CONTRASENA = 6;
 
     private String nombreUsuario;
-    private String hashContrasena;
+    private String contrasena;
     private Rol rol;
     private boolean activo;
 
-    private Usuario(String nombreUsuario, String hashContrasena, Rol rol, boolean activo) {
+    private Usuario(String nombreUsuario, String contrasena, Rol rol, boolean activo) {
         this.nombreUsuario = TextoUtil.requerido(nombreUsuario, "nombre de usuario");
-        this.hashContrasena = Objects.requireNonNull(hashContrasena);
+        this.contrasena = Objects.requireNonNull(contrasena);
         this.rol = Objects.requireNonNull(rol, "El rol es obligatorio");
         this.activo = activo;
     }
 
-    /** Crea un usuario nuevo a partir de la contraseña en texto plano. */
-    public static Usuario crear(String nombreUsuario, String contrasenaPlano, Rol rol) {
-        validarContrasena(contrasenaPlano);
-        return new Usuario(nombreUsuario, hashear(contrasenaPlano), rol, true);
+    /** Crea un usuario nuevo (valida el largo mínimo de la contraseña). */
+    public static Usuario crear(String nombreUsuario, String contrasena, Rol rol) {
+        validarContrasena(contrasena);
+        return new Usuario(nombreUsuario, contrasena, rol, true);
     }
 
-    /** Reconstruye un usuario leído de la BD (ya trae el hash). */
-    public static Usuario desdeBaseDeDatos(String nombreUsuario, String hashContrasena,
-                                           Rol rol, boolean activo) {
-        return new Usuario(nombreUsuario, hashContrasena, rol, activo);
+    /** Reconstruye un usuario leído de la BD. */
+    public static Usuario desdeBaseDeDatos(String nombreUsuario, String contrasena, Rol rol, boolean activo) {
+        return new Usuario(nombreUsuario, contrasena, rol, activo);
     }
 
-    public boolean verificarContrasena(String contrasenaPlano) {
-        return contrasenaPlano != null && hashear(contrasenaPlano).equals(hashContrasena);
+    public boolean verificarContrasena(String contrasenaIngresada) {
+        return contrasena.equals(contrasenaIngresada);
     }
 
     public void cambiarContrasena(String actual, String nueva) {
@@ -49,7 +42,7 @@ public class Usuario {
             throw new IllegalArgumentException("La contraseña actual no es correcta");
         }
         validarContrasena(nueva);
-        this.hashContrasena = hashear(nueva);
+        this.contrasena = nueva;
     }
 
     private static void validarContrasena(String contrasena) {
@@ -59,27 +52,13 @@ public class Usuario {
         }
     }
 
-    public static String hashear(String texto) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] bytes = md.digest(texto.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hex = new StringBuilder();
-            for (byte b : bytes) {
-                hex.append(String.format("%02x", b));
-            }
-            return hex.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 no disponible", e);
-        }
-    }
-
     public String getNombreUsuario() { return nombreUsuario; }
 
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = TextoUtil.requerido(nombreUsuario, "nombre de usuario");
     }
 
-    public String getHashContrasena() { return hashContrasena; }
+    public String getContrasena() { return contrasena; }
 
     public Rol getRol() { return rol; }
 
@@ -89,6 +68,7 @@ public class Usuario {
 
     public void setActivo(boolean activo) { this.activo = activo; }
 
+    /** No muestra la contraseña. */
     @Override
     public String toString() {
         return nombreUsuario + " [" + rol + (activo ? "" : ", inactivo") + "]";

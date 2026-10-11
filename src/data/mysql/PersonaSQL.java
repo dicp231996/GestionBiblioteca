@@ -20,12 +20,12 @@ final class PersonaSQL {
     /** Columnas comunes que deben venir en el SELECT de cada subclase. */
     static final String COLUMNAS = "p.id_persona, p.rut, p.nombres, p.apellido_paterno, p.apellido_materno, "
             + "p.fecha_nacimiento, p.direccion, p.nacionalidad, p.genero, "
-            + "u.nombre_usuario, u.hash_contrasena, u.rol, u.activo";
+            + "u.nombre_usuario, u.contrasena, u.rol, u.activo";
 
     private PersonaSQL() { }
 
     static Usuario leerUsuario(ResultSet rs) throws SQLException {
-        return Usuario.desdeBaseDeDatos(rs.getString("nombre_usuario"), rs.getString("hash_contrasena"),
+        return Usuario.desdeBaseDeDatos(rs.getString("nombre_usuario"), rs.getString("contrasena"),
                 Rol.valueOf(rs.getString("rol")), rs.getBoolean("activo"));
     }
 
@@ -42,13 +42,13 @@ final class PersonaSQL {
                 id = claves.getInt(1);
             }
         }
-        String sqlUsuario = "INSERT INTO usuarios (id_persona, nombre_usuario, hash_contrasena, rol, activo) "
+        String sqlUsuario = "INSERT INTO usuarios (id_persona, nombre_usuario, contrasena, rol, activo) "
                 + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = c.prepareStatement(sqlUsuario)) {
             Usuario u = p.getUsuario();
             ps.setInt(1, id);
             ps.setString(2, u.getNombreUsuario());
-            ps.setString(3, u.getHashContrasena());
+            ps.setString(3, u.getContrasena());
             ps.setString(4, u.getRol().name());
             ps.setBoolean(5, u.isActivo());
             ps.executeUpdate();
@@ -66,12 +66,12 @@ final class PersonaSQL {
             ps.setInt(9, p.getId());
             filas = ps.executeUpdate();
         }
-        String sqlUsuario = "UPDATE usuarios SET nombre_usuario = ?, hash_contrasena = ?, rol = ?, activo = ? "
+        String sqlUsuario = "UPDATE usuarios SET nombre_usuario = ?, contrasena = ?, rol = ?, activo = ? "
                 + "WHERE id_persona = ?";
         try (PreparedStatement ps = c.prepareStatement(sqlUsuario)) {
             Usuario u = p.getUsuario();
             ps.setString(1, u.getNombreUsuario());
-            ps.setString(2, u.getHashContrasena());
+            ps.setString(2, u.getContrasena());
             ps.setString(3, u.getRol().name());
             ps.setBoolean(4, u.isActivo());
             ps.setInt(5, p.getId());

@@ -1,16 +1,15 @@
 package ui.components;
 
+import util.FormatoFecha;
+
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
-/** Formatos de presentación (fechas al estilo chileno: dd-mm-aaaa). */
+/** Formatos de presentación de la interfaz (delegan en util.FormatoFecha: dd-MM-yyyy). */
 public final class Formato {
-
-    public static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     private Formato() { }
 
     public static String fecha(LocalDate fecha) {
-        return fecha == null ? "—" : fecha.format(FECHA);
+        return FormatoFecha.formatear(fecha);
     }
 }

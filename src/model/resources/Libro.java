@@ -2,6 +2,7 @@ package model.resources;
 
 import model.classification.Categoria;
 import model.enums.EstadoLibro;
+import model.exceptions.ReglaNegocioException;
 import model.interfaces.Identificable;
 import util.TextoUtil;
 import util.ValidadorIsbn;

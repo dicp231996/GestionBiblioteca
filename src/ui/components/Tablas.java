@@ -19,7 +19,7 @@ public final class Tablas {
         return crear(modelo, null);
     }
 
-    /** @param resaltar filas que se pintan en rojo suave (por ejemplo, préstamos atrasados). */
+    /** @param resaltar filas que se marcan con fondo rojo claro (por ejemplo, préstamos atrasados). */
     public static <T> JTable crear(TablaModelo<T> modelo, Predicate<T> resaltar) {
         JTable tabla = new JTable(modelo) {
             private static final long serialVersionUID = 1L;
@@ -29,16 +29,13 @@ public final class Tablas {
                 Component c = super.prepareRenderer(renderer, fila, columna);
                 if (resaltar != null && !isRowSelected(fila)
                         && resaltar.test(modelo.getFila(convertRowIndexToModel(fila)))) {
-                    c.setBackground(Estilo.PELIGRO_FONDO);
-                    c.setForeground(Estilo.PELIGRO);
-                } else if (!isRowSelected(fila)) {
-                    c.setForeground(Estilo.TEXTO);
+                    c.setBackground(Estilo.FILA_ATRASADA);
                 }
                 return c;
             }
         };
         tabla.setAutoCreateRowSorter(true);
-        tabla.setRowHeight(26);
+        tabla.setRowHeight(22);
         tabla.setFillsViewportHeight(true);
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.getTableHeader().setReorderingAllowed(false);
@@ -54,9 +51,7 @@ public final class Tablas {
     }
 
     public static JScrollPane conScroll(JTable tabla) {
-        JScrollPane scroll = new JScrollPane(tabla);
-        scroll.getViewport().setBackground(Estilo.SUPERFICIE);
-        return scroll;
+        return new JScrollPane(tabla);
     }
 
     /** Fila seleccionada (considerando el orden aplicado por el usuario al hacer clic en el encabezado). */

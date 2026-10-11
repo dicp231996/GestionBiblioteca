@@ -2,6 +2,7 @@ package model.interfaces;
 
 import model.enums.Permiso;
 import model.enums.Rol;
+import model.exceptions.AccesoDenegadoException;
 import model.security.Usuario;
 
 /**

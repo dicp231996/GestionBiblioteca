@@ -17,12 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -64,7 +60,6 @@ public class ReportesPanel extends Seccion {
 
     private final JComboBox<Estudiante> comboEstudiante = new JComboBox<>();
     private final JLabel totalEnPrestamo = Estilo.ayuda("");
-    private long maximoRanking = 1;
 
     public ReportesPanel(ReporteController reportes, EstudianteController estudiantes) {
         super("Reportes", "Información para la toma de decisiones de la biblioteca.");
@@ -72,8 +67,7 @@ public class ReportesPanel extends Seccion {
         this.estudiantes = estudiantes;
 
         JTable ranking = Tablas.crear(modeloRanking);
-        Tablas.anchos(ranking, 30, 320, 180, 260);
-        ranking.getColumnModel().getColumn(3).setCellRenderer(new BarraRenderer());
+        Tablas.anchos(ranking, 30, 360, 220, 90);
 
         JTable enPrestamo = Tablas.crear(modeloEnPrestamo, Prestamo::estaAtrasado);
         Tablas.anchos(enPrestamo, 280, 230, 100, 90, 80);
@@ -113,7 +107,6 @@ public class ReportesPanel extends Seccion {
             for (Map.Entry<Libro, Long> e : reportes.librosMasPrestados(TOP).entrySet()) {
                 filas.add(new Ranking(posicion++, e.getKey(), e.getValue()));
             }
-            maximoRanking = filas.isEmpty() ? 1 : filas.get(0).prestamos();
             modeloRanking.setFilas(filas);
 
             List<Prestamo> enPrestamo = reportes.librosEnPrestamo();
@@ -140,26 +133,4 @@ public class ReportesPanel extends Seccion {
         Mensajes.intentar(this, () -> modeloHistorial.setFilas(reportes.historialPorEstudiante(est)));
     }
 
-    /** Dibuja la cantidad de préstamos como una barra proporcional al libro más prestado. */
-    private final class BarraRenderer extends DefaultTableCellRenderer {
-        private static final long serialVersionUID = 1L;
-        private long valor;
-
-        @Override
-        public Component getTableCellRendererComponent(JTable t, Object v, boolean sel, boolean foco, int f, int c) {
-            super.getTableCellRendererComponent(t, "", sel, foco, f, c);
-            valor = v == null ? 0 : (Long) v;
-            return this;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            int ancho = (int) ((getWidth() - 50) * (valor / (double) Math.max(1, maximoRanking)));
-            g.setColor(Estilo.ACENTO);
-            g.fillRoundRect(4, 6, Math.max(2, ancho), getHeight() - 12, 6, 6);
-            g.setColor(new Color(0x333333));
-            g.drawString(String.valueOf(valor), ancho + 10, getHeight() / 2 + 5);
-        }
-    }
 }

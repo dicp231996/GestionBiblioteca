@@ -45,8 +45,8 @@ public class PrestamosPanel extends Seccion {
 
     private final JComboBox<Estudiante> comboEstudiante = new JComboBox<>();
     private final JComboBox<Libro> comboLibro = new JComboBox<>();
-    private final JButton registrar = Estilo.botonPrincipal("Registrar préstamo");
-    private final JButton devolver = Estilo.botonPrincipal("Registrar devolución");
+    private final JButton registrar = Estilo.boton("Registrar préstamo");
+    private final JButton devolver = Estilo.boton("Registrar devolución");
     private final JLabel vencimiento = Estilo.ayuda("");
 
     private final TablaModelo<Prestamo> modeloActivos = modeloPrestamos();
@@ -75,10 +75,10 @@ public class PrestamosPanel extends Seccion {
         filaBoton.add(vencimiento, BorderLayout.WEST);
         filaBoton.add(registrar, BorderLayout.EAST);
         form.nota(filaBoton);
-        JPanel nuevo = tarjeta(form);
+        JPanel nuevo = new JPanel(new BorderLayout());
+        nuevo.add(form, BorderLayout.CENTER);
         nuevo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Estilo.BORDE), "Nuevo préstamo"),
-                Estilo.margen(8)));
+                BorderFactory.createTitledBorder("Nuevo préstamo"), Estilo.margen(6)));
 
         // ---- tablas de préstamos
         for (JTable t : new JTable[]{tablaActivos, tablaAtrasados}) {

@@ -4,6 +4,7 @@ import model.enums.Genero;
 import model.interfaces.Autenticable;
 import model.interfaces.Identificable;
 import model.security.Usuario;
+import util.FormatoFecha;
 import util.TextoUtil;
 import util.ValidadorRut;
 
@@ -72,7 +73,7 @@ public abstract class Persona implements Identificable, Autenticable {
         StringBuilder sb = new StringBuilder();
         sb.append("Nombre completo : ").append(getNombreCompleto()).append('\n')
                 .append("RUT             : ").append(ValidadorRut.formatear(rut)).append('\n')
-                .append("Fecha nacimiento: ").append(fechaNacimiento).append('\n')
+                .append("Fecha nacimiento: ").append(FormatoFecha.formatear(fechaNacimiento)).append('\n')
                 .append("Edad            : ").append(getEdad()).append(" años").append('\n')
                 .append("Género          : ").append(genero).append('\n')
                 .append("Nacionalidad    : ").append(nacionalidad).append('\n')

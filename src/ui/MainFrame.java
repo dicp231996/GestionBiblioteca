@@ -3,7 +3,6 @@ package ui;
 import model.core.Persona;
 import model.enums.Permiso;
 import ui.components.BarraEstado;
-import ui.components.Estilo;
 import ui.components.Seccion;
 import ui.controller.Controladores;
 import ui.controller.Sesion;
@@ -15,8 +14,6 @@ import ui.panels.PrestamosPanel;
 import ui.panels.ReportesPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,22 +25,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Ventana principal: encabezado con el usuario, menú superior, panel de navegación lateral
- * y las pantallas en un CardLayout. Las secciones visibles dependen de los permisos del rol.
+ * Ventana principal: barra de menú, panel de navegación lateral y las pantallas en un
+ * CardLayout. Las secciones visibles dependen de los permisos del rol.
  */
 public class MainFrame extends JFrame {
 
@@ -51,7 +45,6 @@ public class MainFrame extends JFrame {
 
     private final CardLayout tarjetas = new CardLayout();
     private final JPanel contenido = new JPanel(tarjetas);
-    private final JPanel navegacion = new JPanel();
     private final ButtonGroup grupoNavegacion = new ButtonGroup();
     private final Map<String, Seccion> secciones = new LinkedHashMap<>();
     private final Map<String, JToggleButton> botonesNav = new LinkedHashMap<>();
@@ -62,7 +55,6 @@ public class MainFrame extends JFrame {
         super("Biblioteca Escolar");
         this.alCerrarSesion = alCerrarSesion;
         Sesion sesion = c.sesion();
-        setIconImage(Estilo.icono());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // ---- secciones según el rol (niveles de privilegio)
@@ -84,21 +76,13 @@ public class MainFrame extends JFrame {
         }
         agregar("Mi perfil", new PerfilPanel(c.perfil()));
 
-        // ---- armado de la ventana
-        navegacion.setLayout(new BoxLayout(navegacion, BoxLayout.Y_AXIS));
-        navegacion.setBackground(Estilo.SUPERFICIE);
-        navegacion.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 0, 1, Estilo.BORDE),
-                BorderFactory.createEmptyBorder(14, 10, 14, 10)));
-        navegacion.setPreferredSize(new Dimension(190, 0));
-        JLabel menuTitulo = Estilo.ayuda("MENÚ");
-        menuTitulo.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 0));
-        navegacion.add(menuTitulo);
-        botonesNav.values().forEach(b -> {
-            navegacion.add(b);
-            navegacion.add(Box.createVerticalStrut(4));
-        });
-        navegacion.add(Box.createVerticalGlue());
+        // ---- panel de navegación lateral
+        JPanel botones = new JPanel(new GridLayout(0, 1, 0, 4));
+        botonesNav.values().forEach(botones::add);
+        JPanel navegacion = new JPanel(new BorderLayout());
+        navegacion.setBorder(BorderFactory.createTitledBorder("Menú"));
+        navegacion.add(botones, BorderLayout.NORTH);
+        navegacion.setPreferredSize(new Dimension(170, 0));
 
         JPanel raiz = new JPanel(new BorderLayout());
         raiz.add(crearEncabezado(sesion.getUsuarioActual()), BorderLayout.NORTH);
@@ -108,8 +92,7 @@ public class MainFrame extends JFrame {
         setContentPane(raiz);
         setJMenuBar(crearMenu());
 
-        setMinimumSize(new Dimension(1100, 680));
-        setSize(new Dimension(1240, 760));
+        setSize(new Dimension(1200, 720));
         setLocationRelativeTo(null);
         mostrar(secciones.keySet().iterator().next());
     }
@@ -117,7 +100,7 @@ public class MainFrame extends JFrame {
     private void agregar(String nombre, Seccion seccion) {
         secciones.put(nombre, seccion);
         contenido.add(seccion, nombre);
-        JToggleButton boton = new BotonNavegacion(nombre);
+        JToggleButton boton = new JToggleButton(nombre);
         boton.addActionListener(e -> mostrar(nombre));
         grupoNavegacion.add(boton);
         botonesNav.put(nombre, boton);
@@ -131,33 +114,12 @@ public class MainFrame extends JFrame {
     }
 
     private JPanel crearEncabezado(Persona usuario) {
-        JPanel encabezado = new JPanel(new BorderLayout());
-        encabezado.setBackground(Estilo.PRIMARIO);
-        encabezado.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
-
-        JLabel marca = new JLabel("Biblioteca Escolar");
-        marca.setFont(new Font(Font.SERIF, Font.BOLD, 22));
-        marca.setForeground(Color.WHITE);
-        encabezado.add(marca, BorderLayout.WEST);
-
-        JLabel nombre = new JLabel(usuario.getNombreCompleto());
-        nombre.setForeground(Color.WHITE);
-        nombre.setFont(Estilo.SUBTITULO);
-        JLabel rol = new JLabel(" " + usuario.getRol().getEtiqueta() + " ");
-        rol.setOpaque(true);
-        rol.setBackground(Estilo.ACENTO);
-        rol.setForeground(Estilo.PRIMARIO);
-        rol.setFont(Estilo.PEQUENA.deriveFont(Font.BOLD));
-        rol.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
-        JButton salir = Estilo.boton("Cerrar sesión");
+        JPanel encabezado = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 6));
+        encabezado.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, java.awt.Color.LIGHT_GRAY));
+        JButton salir = new JButton("Cerrar sesión");
         salir.addActionListener(e -> cerrarSesion());
-
-        JPanel derecha = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        derecha.setOpaque(false);
-        derecha.add(nombre);
-        derecha.add(rol);
-        derecha.add(salir);
-        encabezado.add(derecha, BorderLayout.EAST);
+        encabezado.add(new JLabel("Usuario: " + usuario.getNombreCompleto() + " (" + usuario.getRol() + ")"));
+        encabezado.add(salir);
         return encabezado;
     }
 
@@ -188,7 +150,7 @@ public class MainFrame extends JFrame {
         acerca.addActionListener(e -> JOptionPane.showMessageDialog(this,
                 "Sistema de Gestión de Biblioteca Escolar\nDesarrollo Orientado a Objetos II\n\n"
                         + "Java Swing · MySQL (JDBC) · MVC · DAO · Singleton",
-                "Acerca de", JOptionPane.INFORMATION_MESSAGE, new javax.swing.ImageIcon(Estilo.icono())));
+                "Acerca de", JOptionPane.INFORMATION_MESSAGE));
         ayuda.add(acerca);
 
         menu.add(sistema);
@@ -200,42 +162,5 @@ public class MainFrame extends JFrame {
     private void cerrarSesion() {
         dispose();
         alCerrarSesion.run();
-    }
-
-    /** Botón del menú lateral: la sección activa se pinta en azul con una marca dorada. */
-    private static final class BotonNavegacion extends JToggleButton {
-        private static final long serialVersionUID = 1L;
-
-        BotonNavegacion(String texto) {
-            super(texto);
-            setHorizontalAlignment(SwingConstants.LEFT);
-            setFont(Estilo.SUBTITULO);
-            setForeground(Estilo.TEXTO);
-            setContentAreaFilled(false);
-            setBorderPainted(false);
-            setFocusPainted(false);
-            setOpaque(false);
-            setBorder(BorderFactory.createEmptyBorder(9, 16, 9, 10));
-            setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            getModel().addChangeListener(e -> setForeground(isSelected() ? Color.WHITE : Estilo.TEXTO));
-        }
-
-        @Override
-        protected void paintComponent(java.awt.Graphics g) {
-            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-            if (isSelected()) {
-                g2.setColor(Estilo.PRIMARIO);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.setColor(Estilo.ACENTO);
-                g2.fillRoundRect(0, 6, 4, getHeight() - 12, 4, 4);
-            } else if (getModel().isRollover()) {
-                g2.setColor(new Color(0xECEFF4));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-            }
-            g2.dispose();
-            super.paintComponent(g);
-        }
     }
 }

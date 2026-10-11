@@ -18,7 +18,6 @@ import services.AutenticacionService;
 import services.ReporteService;
 import ui.LoginFrame;
 import ui.MainFrame;
-import ui.components.Estilo;
 import ui.controller.Controladores;
 import ui.controller.EstudianteController;
 import ui.controller.LibroController;
@@ -75,7 +74,6 @@ public class Biblioteca {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Estilo.instalarLookAndFeel();
             try {
                 DatabaseConnection.getInstance().getConnection(); // prueba la conexión al iniciar
             } catch (SQLException e) {

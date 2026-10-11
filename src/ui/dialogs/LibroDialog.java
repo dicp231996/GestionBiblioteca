@@ -58,7 +58,7 @@ public class LibroDialog extends JDialog {
         if (existente != null) cargar(existente);
 
         JButton cancelar = Estilo.boton("Cancelar");
-        JButton guardar = Estilo.botonPrincipal("Guardar");
+        JButton guardar = Estilo.boton("Guardar");
         cancelar.addActionListener(e -> dispose());
         guardar.addActionListener(e -> guardar());
         JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));

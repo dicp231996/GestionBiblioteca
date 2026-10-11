@@ -5,6 +5,7 @@ import data.dao.PrestamoDAO;
 import model.core.Persona;
 import model.entities.Estudiante;
 import model.enums.Permiso;
+import model.exceptions.ReglaNegocioException;
 import model.transactions.Prestamo;
 
 import java.time.LocalDate;
