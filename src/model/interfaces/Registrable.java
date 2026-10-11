@@ -1,39 +1,19 @@
 package model.interfaces;
 
-import model.entities.Usuario;
-import model.enums.Permiso;
-import model.enums.Rol;
-import model.exceptions.AccesoDenegadoException;
+import java.util.List;
 
 /**
- * Contrato para todo lo que puede iniciar sesión en el sistema.
- * Los métodos default resuelven credenciales y privilegios a partir del Usuario.
+ * Contrato de registro que implementan Estudiante y Bibliotecario.
+ * Cada subclase define sus propias reglas (polimorfismo): un estudiante valida
+ * su edad escolar y curso; un bibliotecario, su mayoría de edad y año de contratación.
+ * La persistencia NO va aquí: la hace ServicioGestion a través del DAO.
  */
-public interface Autenticable {
+public interface Registrable {
 
-    Usuario getUsuario();
+    /** @return lista de errores; vacía si los datos permiten el registro. */
+    List<String> validarDatosRegistro();
 
-    default String getNombreUsuario() {
-        return getUsuario().getNombreUsuario();
-    }
-
-    default Rol getRol() {
-        return getUsuario().getRol();
-    }
-
-    default boolean autenticar(String contrasena) {
-        return getUsuario().isActivo() && getUsuario().verificarContrasena(contrasena);
-    }
-
-    default boolean tienePermiso(Permiso permiso) {
-        return getRol().tienePermiso(permiso);
-    }
-
-    /** Lanza AccesoDenegadoException si el rol no tiene el permiso. */
-    default void exigirPermiso(Permiso permiso) {
-        if (!tienePermiso(permiso)) {
-            throw new AccesoDenegadoException(
-                    "El rol " + getRol() + " no tiene permiso para: " + permiso);
-        }
+    default boolean esRegistrable() {
+        return validarDatosRegistro().isEmpty();
     }
 }

@@ -19,7 +19,7 @@ import java.util.Objects;
  * Estudiante del liceo. Hereda de Persona y además implementa Registrable
  * (puede registrarse por su cuenta o ser registrado por un bibliotecario).
  */
-public class Estudiante extends Persona implements Registrable {
+public final class Estudiante extends Persona implements Registrable {
 
     public static final int MAX_LIBROS_PRESTADOS = 3;
     public static final int EDAD_MINIMA = 10;

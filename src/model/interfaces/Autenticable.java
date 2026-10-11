@@ -1,9 +1,9 @@
 package model.interfaces;
 
-import model.entities.Usuario;
 import model.enums.Permiso;
 import model.enums.Rol;
 import model.exceptions.AccesoDenegadoException;
+import model.security.Usuario;
 
 /**
  * Contrato para todo lo que puede iniciar sesión en el sistema.

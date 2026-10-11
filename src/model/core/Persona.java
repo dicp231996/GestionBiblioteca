@@ -1,7 +1,6 @@
 package model.core;
 
 import model.enums.Genero;
-import model.interfaces.Autenticable;
 import model.interfaces.Identificable;
 import model.security.Usuario;
 import util.TextoUtil;
@@ -112,25 +111,25 @@ public abstract class Persona implements Identificable, Autenticable {
 
     public String getNombres() { return nombres; }
 
-    public void setNombres(String nombres) {
+    public final void setNombres(String nombres) {
         this.nombres = TextoUtil.requerido(nombres, "nombres");
     }
 
     public String getApellidoPaterno() { return apellidoPaterno; }
 
-    public void setApellidoPaterno(String apellidoPaterno) {
+    public final void setApellidoPaterno(String apellidoPaterno) {
         this.apellidoPaterno = TextoUtil.requerido(apellidoPaterno, "apellido paterno");
     }
 
     public String getApellidoMaterno() { return apellidoMaterno; }
 
-    public void setApellidoMaterno(String apellidoMaterno) {
+    public final void setApellidoMaterno(String apellidoMaterno) {
         this.apellidoMaterno = TextoUtil.requerido(apellidoMaterno, "apellido materno");
     }
 
     public LocalDate getFechaNacimiento() { return fechaNacimiento; }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+    public final void setFechaNacimiento(LocalDate fechaNacimiento) {
         Objects.requireNonNull(fechaNacimiento, "La fecha de nacimiento es obligatoria");
         if (fechaNacimiento.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser futura");
@@ -141,25 +140,25 @@ public abstract class Persona implements Identificable, Autenticable {
     /** RUT normalizado sin puntos: "12345678-K". */
     public String getRut() { return rut; }
 
-    public void setRut(String rut) {
+    public final void setRut(String rut) {
         this.rut = ValidadorRut.normalizar(rut); // lanza IllegalArgumentException si es inválido
     }
 
     public String getDireccion() { return direccion; }
 
-    public void setDireccion(String direccion) {
+    public final void setDireccion(String direccion) {
         this.direccion = TextoUtil.requerido(direccion, "dirección");
     }
 
     public String getNacionalidad() { return nacionalidad; }
 
-    public void setNacionalidad(String nacionalidad) {
+    public final void setNacionalidad(String nacionalidad) {
         this.nacionalidad = TextoUtil.requerido(nacionalidad, "nacionalidad");
     }
 
     public Genero getGenero() { return genero; }
 
-    public void setGenero(Genero genero) {
+    public final void setGenero(Genero genero) {
         this.genero = Objects.requireNonNull(genero, "El género es obligatorio");
     }
 

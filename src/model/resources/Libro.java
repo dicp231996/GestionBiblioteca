@@ -1,5 +1,6 @@
 package model.resources;
 
+import model.classification.Categoria;
 import model.enums.EstadoLibro;
 import model.exceptions.ReglaNegocioException;
 import model.interfaces.Identificable;
@@ -8,7 +9,7 @@ import util.ValidadorIsbn;
 
 import java.util.Objects;
 
-public class Libro implements Identificable {
+public final class Libro implements Identificable {
 
     private int id;
     private String titulo;

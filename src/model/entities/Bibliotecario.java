@@ -16,7 +16,7 @@ import java.util.List;
  * inventario y estudiantes) vienen de Rol.BIBLIOTECARIO y se ejercen a través
  * de ServicioGestion / ServicioPrestamo / ServicioDevolucion.
  */
-public class Bibliotecario extends Persona implements Registrable {
+public final class Bibliotecario extends Persona implements Registrable {
 
     public static final int EDAD_MINIMA = 18;
 
