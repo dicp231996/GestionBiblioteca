@@ -2,11 +2,9 @@ package ui.controller;
 
 import model.core.Persona;
 import model.entities.Estudiante;
-import model.security.GeneradorUsuario;
 import model.services.ServicioGestion;
 import services.AutenticacionService;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 /** Inicio de sesión y autorregistro de estudiantes (pantalla de login). */
@@ -31,15 +29,5 @@ public class LoginController {
 
     public Estudiante autoregistrar(Estudiante estudiante) {
         return gestion.autoregistrarEstudiante(estudiante);
-    }
-
-    /** Muestra en el formulario cómo quedará el usuario antes de guardar. */
-    public String previsualizarUsuario(String nombres, String apPaterno, String apMaterno,
-                                       String rut, LocalDate nacimiento) {
-        try {
-            return GeneradorUsuario.generar(nombres, apPaterno, apMaterno, rut, nacimiento);
-        } catch (RuntimeException e) {
-            return "";
-        }
     }
 }

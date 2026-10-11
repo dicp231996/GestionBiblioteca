@@ -9,7 +9,6 @@ import ui.controller.Sesion;
 import ui.panels.CatalogoPanel;
 import ui.panels.EstudiantesPanel;
 import ui.panels.MisPrestamosPanel;
-import ui.panels.PerfilPanel;
 import ui.panels.PrestamosPanel;
 import ui.panels.ReportesPanel;
 
@@ -21,7 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -74,7 +72,6 @@ public class MainFrame extends JFrame {
         if (sesion.puede(Permiso.VER_REPORTES)) {
             agregar("Reportes", new ReportesPanel(c.reportes(), c.estudiantes()));
         }
-        agregar("Mi perfil", new PerfilPanel(c.perfil()));
 
         // ---- panel de navegación lateral
         JPanel botones = new JPanel(new GridLayout(0, 1, 0, 4));
@@ -136,26 +133,7 @@ public class MainFrame extends JFrame {
         sistema.addSeparator();
         sistema.add(salir);
 
-        JMenu irA = new JMenu("Ir a");
-        int tecla = KeyEvent.VK_1;
-        for (String nombre : secciones.keySet()) {
-            JMenuItem item = new JMenuItem(nombre);
-            item.setAccelerator(KeyStroke.getKeyStroke(tecla++, InputEvent.CTRL_DOWN_MASK));
-            item.addActionListener(e -> mostrar(nombre));
-            irA.add(item);
-        }
-
-        JMenu ayuda = new JMenu("Ayuda");
-        JMenuItem acerca = new JMenuItem("Acerca de");
-        acerca.addActionListener(e -> JOptionPane.showMessageDialog(this,
-                "Sistema de Gestión de Biblioteca Escolar\nDesarrollo Orientado a Objetos II\n\n"
-                        + "Java Swing · MySQL (JDBC) · MVC · DAO · Singleton",
-                "Acerca de", JOptionPane.INFORMATION_MESSAGE));
-        ayuda.add(acerca);
-
         menu.add(sistema);
-        menu.add(irA);
-        menu.add(ayuda);
         return menu;
     }
 

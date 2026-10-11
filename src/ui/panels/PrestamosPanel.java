@@ -20,7 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -47,13 +47,17 @@ public class PrestamosPanel extends Seccion {
     private final JComboBox<Libro> comboLibro = new JComboBox<>();
     private final JButton registrar = Estilo.boton("Registrar préstamo");
     private final JButton devolver = Estilo.boton("Registrar devolución");
-    private final JLabel vencimiento = Estilo.ayuda("");
+    private final JLabel resumen = new JLabel();
 
-    private final TablaModelo<Prestamo> modeloActivos = modeloPrestamos();
-    private final TablaModelo<Prestamo> modeloAtrasados = modeloPrestamos();
-    private final JTable tablaActivos = Tablas.crear(modeloActivos, Prestamo::estaAtrasado);
-    private final JTable tablaAtrasados = Tablas.crear(modeloAtrasados, Prestamo::estaAtrasado);
-    private final JTabbedPane pestanas = new JTabbedPane();
+    private final TablaModelo<Prestamo> modelo = new TablaModelo<>(
+            columna("N°", Integer.class, Prestamo::getId),
+            columna("Libro", String.class, p -> p.getLibro().getTitulo()),
+            columna("Estudiante", String.class, p -> p.getEstudiante().getNombreCompleto()),
+            columna("Curso", String.class, p -> p.getEstudiante().getCurso().toString()),
+            columna("Prestado", LocalDate.class, Prestamo::getFechaPrestamo),
+            columna("Vence", LocalDate.class, Prestamo::getFechaVencimiento),
+            columna("Días atraso", Long.class, Prestamo::diasAtraso));
+    private final JTable tabla = Tablas.crear(modelo, Prestamo::estaAtrasado);
 
     public PrestamosPanel(PrestamoController prestamos, EstudianteController estudiantes,
                           LibroController libros, BarraEstado barra) {
@@ -63,55 +67,37 @@ public class PrestamosPanel extends Seccion {
         this.estudiantes = estudiantes;
         this.libros = libros;
         this.barra = barra;
+        Tablas.anchos(tabla, 40, 250, 220, 100, 85, 85, 80);
 
         // ---- formulario de nuevo préstamo
-        vencimiento.setText("Si se presta hoy, vence el " + Formato.fecha(LocalDate.now().plusDays(Prestamo.DIAS_PRESTAMO)));
         registrar.addActionListener(e -> registrarPrestamo());
+        JPanel filaBoton = new JPanel(new BorderLayout());
+        filaBoton.add(Estilo.ayuda("Si se presta hoy, vence el "
+                + Formato.fecha(LocalDate.now().plusDays(Prestamo.DIAS_PRESTAMO))), BorderLayout.WEST);
+        filaBoton.add(registrar, BorderLayout.EAST);
         Formulario form = new Formulario()
                 .campo("Estudiante", comboEstudiante)
-                .campo("Libro disponible", comboLibro);
-        JPanel filaBoton = new JPanel(new BorderLayout());
-        filaBoton.setOpaque(false);
-        filaBoton.add(vencimiento, BorderLayout.WEST);
-        filaBoton.add(registrar, BorderLayout.EAST);
-        form.nota(filaBoton);
+                .campo("Libro disponible", comboLibro)
+                .nota(filaBoton);
         JPanel nuevo = new JPanel(new BorderLayout());
         nuevo.add(form, BorderLayout.CENTER);
         nuevo.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Nuevo préstamo"), Estilo.margen(6)));
 
-        // ---- tablas de préstamos
-        for (JTable t : new JTable[]{tablaActivos, tablaAtrasados}) {
-            Tablas.anchos(t, 40, 250, 220, 100, 85, 85, 80);
-        }
-        pestanas.addTab("Préstamos activos", Tablas.conScroll(tablaActivos));
-        pestanas.addTab("Atrasados", Tablas.conScroll(tablaAtrasados));
+        // ---- préstamos activos
+        JPanel activos = new JPanel(new BorderLayout(0, 4));
+        activos.add(resumen, BorderLayout.NORTH);
+        activos.add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        JPanel centro = new JPanel(new BorderLayout(0, 12));
-        centro.setOpaque(false);
+        JPanel centro = new JPanel(new BorderLayout(0, 10));
         centro.add(nuevo, BorderLayout.NORTH);
-        centro.add(pestanas, BorderLayout.CENTER);
+        centro.add(activos, BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
 
         devolver.addActionListener(e -> registrarDevolucion());
-        JButton actualizar = Estilo.boton("Actualizar");
-        actualizar.addActionListener(e -> refrescar());
-        JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
-        botones.setOpaque(false);
-        botones.add(actualizar);
+        JPanel botones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         botones.add(devolver);
         add(botones, BorderLayout.SOUTH);
-    }
-
-    private static TablaModelo<Prestamo> modeloPrestamos() {
-        return new TablaModelo<>(
-                columna("N°", Integer.class, Prestamo::getId),
-                columna("Libro", String.class, p -> p.getLibro().getTitulo()),
-                columna("Estudiante", String.class, p -> p.getEstudiante().getNombreCompleto()),
-                columna("Curso", String.class, p -> p.getEstudiante().getCurso().toString()),
-                columna("Prestado", LocalDate.class, Prestamo::getFechaPrestamo),
-                columna("Vence", LocalDate.class, Prestamo::getFechaVencimiento),
-                columna("Días atraso", Long.class, Prestamo::diasAtraso));
     }
 
     @Override
@@ -128,12 +114,10 @@ public class PrestamosPanel extends Seccion {
             comboLibro.removeAllItems();
             libros.disponibles().forEach(comboLibro::addItem);
 
-            List<Prestamo> activos = prestamos.activos();
-            modeloActivos.setFilas(activos);
-            List<Prestamo> atrasados = activos.stream().filter(Prestamo::estaAtrasado).toList();
-            modeloAtrasados.setFilas(atrasados);
-            pestanas.setTitleAt(0, "Préstamos activos (" + activos.size() + ")");
-            pestanas.setTitleAt(1, "Atrasados (" + atrasados.size() + ")");
+            List<Prestamo> lista = prestamos.activos();
+            modelo.setFilas(lista);
+            long atrasados = lista.stream().filter(Prestamo::estaAtrasado).count();
+            resumen.setText("Préstamos activos: " + lista.size() + "  ·  atrasados: " + atrasados);
         });
     }
 
@@ -162,9 +146,6 @@ public class PrestamosPanel extends Seccion {
     }
 
     private void registrarDevolucion() {
-        boolean enAtrasados = pestanas.getSelectedIndex() == 1;
-        JTable tabla = enAtrasados ? tablaAtrasados : tablaActivos;
-        TablaModelo<Prestamo> modelo = enAtrasados ? modeloAtrasados : modeloActivos;
         Prestamo prestamo = Tablas.seleccion(tabla, modelo).orElse(null);
         if (prestamo == null) {
             Mensajes.info(this, "Selecciona el préstamo que se está devolviendo.");

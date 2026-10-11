@@ -47,8 +47,4 @@ public class LibroController {
     public List<Categoria> categorias() {
         return gestion.listarCategorias();
     }
-
-    public Categoria registrarCategoria(String nombre, String descripcion) {
-        return gestion.registrarCategoria(sesion.getUsuarioActual(), new Categoria(nombre, descripcion));
-    }
 }

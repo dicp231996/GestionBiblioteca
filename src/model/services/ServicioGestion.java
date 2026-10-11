@@ -157,21 +157,12 @@ public class ServicioGestion {
             throw new ReglaNegocioException("No se puede eliminar: el estudiante tiene libros sin devolver");
         }
         if (!prestamoDAO.listarPorEstudiante(idEstudiante).isEmpty()) {
-            // Borrarlo haría perder su historial: en ese caso se desactiva la cuenta.
-            throw new ReglaNegocioException("No se puede eliminar: el estudiante tiene historial de préstamos. "
-                    + "Desactiva su cuenta en su lugar.");
+            // Borrarlo haría perder su historial de préstamos.
+            throw new ReglaNegocioException("No se puede eliminar: el estudiante tiene historial de préstamos.");
         }
         return estudianteDAO.eliminar(idEstudiante);
     }
 
-    /** Activa o desactiva la cuenta: un estudiante inactivo no puede iniciar sesión ni pedir libros. */
-    public boolean cambiarEstadoCuenta(Persona solicitante, int idEstudiante, boolean activo) {
-        solicitante.exigirPermiso(Permiso.GESTIONAR_ESTUDIANTES);
-        Estudiante est = estudianteDAO.buscarPorId(idEstudiante)
-                .orElseThrow(() -> new ReglaNegocioException("No existe el estudiante " + idEstudiante));
-        est.getUsuario().setActivo(activo);
-        return estudianteDAO.actualizar(est);
-    }
 
     public Optional<Estudiante> buscarEstudiantePorId(Persona solicitante, int idEstudiante) {
         ServicioGestion.verificarAccesoAEstudiante(solicitante, idEstudiante, Permiso.CONSULTAR_PROPIOS_PRESTAMOS);

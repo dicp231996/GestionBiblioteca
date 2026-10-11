@@ -3,33 +3,31 @@ package util;
 import java.util.regex.Pattern;
 
 /**
- * Valida y normaliza RUT chilenos (formato + dígito verificador, módulo 11).
- * Formatos aceptados: "12.345.678-5" o "12345678-5" (DV puede ser K/k).
+ * Valida el FORMATO de un RUT chileno y lo normaliza.
+ * Acepta: "12.345.678-5", "12345678-5", "123456785", "1.234.567-K" (la K en mayúscula o minúscula).
+ * Solo revisa la forma (7 u 8 dígitos + dígito verificador); no calcula el dígito verificador.
  */
 public final class ValidadorRut {
 
+    /** 7 u 8 dígitos (con o sin puntos), guion opcional y un dígito o K al final. */
     private static final Pattern FORMATO =
-            Pattern.compile("^(\\d{1,2}\\.\\d{3}\\.\\d{3}|\\d{7,8})-[\\dkK]$");
+            Pattern.compile("^(\\d{1,2}\\.?\\d{3}\\.?\\d{3})-?([\\dkK])$");
 
     private ValidadorRut() { }
 
     public static boolean esValido(String rut) {
-        if (rut == null) return false;
-        String limpio = rut.trim();
-        if (!FORMATO.matcher(limpio).matches()) return false;
-
-        String[] partes = limpio.replace(".", "").split("-");
-        int cuerpo = Integer.parseInt(partes[0]);
-        char dvIngresado = Character.toUpperCase(partes[1].charAt(0));
-        return calcularDv(cuerpo) == dvIngresado;
+        return rut != null && FORMATO.matcher(rut.trim()).matches();
     }
 
-    /** Devuelve el RUT sin puntos y con DV en mayúscula: "12345678-K". */
+    /** Devuelve el RUT sin puntos, con guion y DV en mayúscula: "12345678-K". */
     public static String normalizar(String rut) {
         if (!esValido(rut)) {
-            throw new IllegalArgumentException("RUT inválido: " + rut);
+            throw new IllegalArgumentException("RUT inválido: " + rut + " (use el formato 12.345.678-9)");
         }
-        return rut.trim().replace(".", "").toUpperCase();
+        String limpio = rut.trim().replace(".", "").replace("-", "").toUpperCase();
+        String cuerpo = limpio.substring(0, limpio.length() - 1);
+        char dv = limpio.charAt(limpio.length() - 1);
+        return cuerpo + "-" + dv;
     }
 
     /** Formato de presentación: "12.345.678-K". */
@@ -41,19 +39,5 @@ public final class ValidadorRut {
             cuerpo.insert(i, '.');
         }
         return cuerpo.append('-').append(partes[1]).toString();
-    }
-
-    public static char calcularDv(int cuerpo) {
-        int suma = 0;
-        int multiplicador = 2;
-        while (cuerpo > 0) {
-            suma += (cuerpo % 10) * multiplicador;
-            cuerpo /= 10;
-            multiplicador = (multiplicador == 7) ? 2 : multiplicador + 1;
-        }
-        int resto = 11 - (suma % 11);
-        if (resto == 11) return '0';
-        if (resto == 10) return 'K';
-        return (char) ('0' + resto);
     }
 }

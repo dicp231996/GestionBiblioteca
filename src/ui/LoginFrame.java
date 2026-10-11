@@ -87,8 +87,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void registrarse() {
-        new EstudianteDialog(this, "Registro de estudiante", null, controller::autoregistrar,
-                controller::previsualizarUsuario).mostrar().ifPresent(e -> {
+        new EstudianteDialog(this, "Registro de estudiante", null, controller::autoregistrar).mostrar().ifPresent(e -> {
             usuario.setText(e.getNombreUsuario());
             contrasena.setText("");
             contrasena.requestFocusInWindow();

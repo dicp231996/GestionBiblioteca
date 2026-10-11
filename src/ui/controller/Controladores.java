@@ -6,6 +6,5 @@ public record Controladores(Sesion sesion,
                             LibroController libros,
                             EstudianteController estudiantes,
                             PrestamoController prestamos,
-                            ReporteController reportes,
-                            PerfilController perfil) {
+                            ReporteController reportes) {
 }

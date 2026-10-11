@@ -22,7 +22,6 @@ import ui.controller.Controladores;
 import ui.controller.EstudianteController;
 import ui.controller.LibroController;
 import ui.controller.LoginController;
-import ui.controller.PerfilController;
 import ui.controller.PrestamoController;
 import ui.controller.ReporteController;
 import ui.controller.Sesion;
@@ -57,8 +56,7 @@ public class Biblioteca {
                 new LibroController(gestion, sesion),
                 new EstudianteController(gestion, servicioPrestamo, sesion),
                 new PrestamoController(servicioPrestamo, servicioDevolucion, gestion, sesion),
-                new ReporteController(reportes, sesion),
-                new PerfilController(gestion, sesion));
+                new ReporteController(reportes, sesion));
     }
 
     public void mostrarLogin() {
