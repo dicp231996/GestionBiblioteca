@@ -10,8 +10,6 @@ import model.core.Persona;
 import model.entities.Bibliotecario;
 import model.entities.Estudiante;
 import model.enums.Permiso;
-import model.exceptions.AccesoDenegadoException;
-import model.exceptions.ReglaNegocioException;
 import model.interfaces.Registrable;
 import model.resources.Libro;
 import model.transactions.Prestamo;

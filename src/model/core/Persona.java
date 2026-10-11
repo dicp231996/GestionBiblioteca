@@ -1,6 +1,7 @@
 package model.core;
 
 import model.enums.Genero;
+import model.interfaces.Autenticable;
 import model.interfaces.Identificable;
 import model.security.Usuario;
 import util.TextoUtil;
@@ -27,7 +28,7 @@ public abstract class Persona implements Identificable, Autenticable {
     private Genero genero;
     private Usuario usuario;
 
-    /** Constructor para personas nuevas (la subclase crea luego su Usuario). */
+    /** Constructor para personas nuevas (la subclase crea luego su Usuario con GeneradorUsuario). */
     protected Persona(String nombres, String apellidoPaterno, String apellidoMaterno,
                       LocalDate fechaNacimiento, String rut, String direccion,
                       String nacionalidad, Genero genero) {
@@ -49,22 +50,6 @@ public abstract class Persona implements Identificable, Autenticable {
                 direccion, nacionalidad, genero);
         this.id = id;
         setUsuario(usuario);
-    }
-
-    // ------------------------------------------------------------------ usuario
-
-    /**
-     * Cada rol arma su nombre de usuario a su manera (método abstracto -> polimorfismo).
-     * Se construye a partir de los atributos recibidos en el constructor.
-     */
-    protected abstract String generarNombreUsuario();
-
-    /** Base común: inicial del primer nombre + apellido paterno + inicial del materno. Ej: "jperezg". */
-    protected final String baseNombreUsuario() {
-        String primerNombre = nombres.split("\\s+")[0];
-        return TextoUtil.normalizar(primerNombre).charAt(0)
-                + TextoUtil.normalizar(apellidoPaterno)
-                + TextoUtil.normalizar(apellidoMaterno).charAt(0);
     }
 
     // ------------------------------------------------------------------ datos

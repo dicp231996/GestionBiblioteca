@@ -6,6 +6,7 @@ import model.enums.Rol;
 import model.exceptions.ReglaNegocioException;
 import model.interfaces.Registrable;
 import model.resources.Libro;
+import model.security.GeneradorUsuario;
 import model.security.Usuario;
 import model.valueobjects.Curso;
 
@@ -29,14 +30,14 @@ public final class Estudiante extends Persona implements Registrable {
     // ArrayList y no un array fijo: la cantidad de libros prestados cambia en el tiempo.
     private final List<Libro> librosPrestados = new ArrayList<>();
 
-    /** Estudiante nuevo: genera su usuario a partir de sus datos. */
+    /** Estudiante nuevo: su usuario se genera con GeneradorUsuario a partir de sus datos. */
     public Estudiante(String nombres, String apellidoPaterno, String apellidoMaterno,
                       LocalDate fechaNacimiento, String rut, String direccion,
                       String nacionalidad, Genero genero, Curso curso, String contrasena) {
         super(nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, rut,
                 direccion, nacionalidad, genero);
         setCurso(curso);
-        setUsuario(Usuario.crear(generarNombreUsuario(), contrasena, Rol.ESTUDIANTE));
+        setUsuario(Usuario.crear(GeneradorUsuario.generar(this), contrasena, Rol.ESTUDIANTE));
     }
 
     /** Estudiante leído desde la BD (sobrecarga de constructor). */
@@ -48,12 +49,6 @@ public final class Estudiante extends Persona implements Registrable {
         setCurso(curso);
     }
 
-    /** Usuario de estudiante: base + últimos 3 dígitos del RUT. Ej: "jperezg678". */
-    @Override
-    protected String generarNombreUsuario() {
-        String cuerpoRut = getRut().split("-")[0];
-        return baseNombreUsuario() + cuerpoRut.substring(cuerpoRut.length() - 3);
-    }
 
     // ------------------------------------------------------------------ préstamos
     // synchronized: préstamos y devoluciones pueden tocar esta lista desde hilos distintos.

@@ -4,6 +4,7 @@ import model.core.Persona;
 import model.enums.Genero;
 import model.enums.Rol;
 import model.interfaces.Registrable;
+import model.security.GeneradorUsuario;
 import model.security.Usuario;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public final class Bibliotecario extends Persona implements Registrable {
         super(nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, rut,
                 direccion, nacionalidad, genero);
         setAnioContratacion(anioContratacion);
-        setUsuario(Usuario.crear(generarNombreUsuario(), contrasena, Rol.BIBLIOTECARIO));
+        setUsuario(Usuario.crear(GeneradorUsuario.generar(this), contrasena, Rol.BIBLIOTECARIO));
     }
 
     public Bibliotecario(int id, String nombres, String apellidoPaterno, String apellidoMaterno,
@@ -41,11 +42,6 @@ public final class Bibliotecario extends Persona implements Registrable {
         setAnioContratacion(anioContratacion);
     }
 
-    /** Usuario de bibliotecario: prefijo "bib." + base. Ej: "bib.jperezg". */
-    @Override
-    protected String generarNombreUsuario() {
-        return "bib." + baseNombreUsuario();
-    }
 
     public int getAniosServicio() {
         return Year.now().getValue() - anioContratacion;

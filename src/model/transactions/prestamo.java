@@ -2,7 +2,6 @@ package model.transactions;
 
 import model.entities.Estudiante;
 import model.enums.EstadoPrestamo;
-import model.exceptions.ReglaNegocioException;
 import model.interfaces.Identificable;
 import model.resources.Libro;
 
