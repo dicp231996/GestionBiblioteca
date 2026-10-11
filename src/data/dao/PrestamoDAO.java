@@ -8,4 +8,5 @@ public interface PrestamoDAO extends CrudDAO<Prestamo> {
     List<Prestamo> listarActivos();
     List<Prestamo> listarPorEstudiante(int idEstudiante);
     List<Prestamo> listarActivosPorLibro(int idLibro);
+    boolean existenPrestamosDeLibro(int idLibro);
 }

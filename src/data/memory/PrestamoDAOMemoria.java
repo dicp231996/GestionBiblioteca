@@ -21,4 +21,9 @@ public class PrestamoDAOMemoria extends MemoriaCrudDAO<Prestamo> implements Pres
     public List<Prestamo> listarActivosPorLibro(int idLibro) {
         return filtrar(p -> p.estaActivo() && p.getLibro().getId() == idLibro);
     }
+
+    @Override
+    public boolean existenPrestamosDeLibro(int idLibro) {
+        return datos.values().stream().anyMatch(p -> p.getLibro().getId() == idLibro);
+    }
 }

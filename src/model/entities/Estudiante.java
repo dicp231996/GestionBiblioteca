@@ -82,9 +82,19 @@ public final class Estudiante extends Persona implements Registrable {
         return librosPrestados.removeIf(l -> l.getId() == libro.getId());
     }
 
-    /** Lista de solo lectura: se modifica únicamente con agregar/quitar. */
-    public List<Libro> getLibrosPrestados() {
-        return Collections.unmodifiableList(librosPrestados);
+    /**
+     * Uso exclusivo de la capa de datos: reconstruye los libros prestados al leer el
+     * estudiante desde la BD (la tabla prestamos es la fuente de verdad). No aplica las
+     * reglas de negocio porque los préstamos ya fueron validados cuando se registraron.
+     */
+    public synchronized void restaurarLibrosPrestados(List<Libro> libros) {
+        librosPrestados.clear();
+        librosPrestados.addAll(libros);
+    }
+
+    /** Copia de solo lectura: se modifica únicamente con agregar/quitar. */
+    public synchronized List<Libro> getLibrosPrestados() {
+        return Collections.unmodifiableList(new ArrayList<>(librosPrestados));
     }
 
     // ------------------------------------------------------------------ registro

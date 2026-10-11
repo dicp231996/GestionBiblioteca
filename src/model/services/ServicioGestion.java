@@ -10,6 +10,8 @@ import model.core.Persona;
 import model.entities.Bibliotecario;
 import model.entities.Estudiante;
 import model.enums.Permiso;
+import model.exceptions.AccesoDenegadoException;
+import model.exceptions.ReglaNegocioException;
 import model.interfaces.Registrable;
 import model.resources.Libro;
 import model.transactions.Prestamo;
@@ -59,6 +61,11 @@ public class ServicioGestion {
         if (!prestamoDAO.listarActivosPorLibro(idLibro).isEmpty()) {
             throw new ReglaNegocioException("No se puede eliminar: el libro tiene préstamos activos");
         }
+        if (prestamoDAO.existenPrestamosDeLibro(idLibro)) {
+            // Borrarlo haría perder el historial: se debe dar de baja (estado DADO_DE_BAJA).
+            throw new ReglaNegocioException("No se puede eliminar: el libro tiene historial de préstamos. "
+                    + "Edítalo y cambia su estado a \"Dado de baja\".");
+        }
         return libroDAO.eliminar(idLibro);
     }
 
@@ -83,6 +90,11 @@ public class ServicioGestion {
             throw new ReglaNegocioException("La categoría '" + categoria + "' ya existe");
         }
         return categoriaDAO.insertar(categoria);
+    }
+
+    public Optional<Libro> buscarLibroPorId(Persona solicitante, int idLibro) {
+        solicitante.exigirPermiso(Permiso.CONSULTAR_CATALOGO);
+        return libroDAO.buscarPorId(idLibro);
     }
 
     public List<Categoria> listarCategorias() {
@@ -144,7 +156,26 @@ public class ServicioGestion {
         if (est.tieneLibrosPrestados()) {
             throw new ReglaNegocioException("No se puede eliminar: el estudiante tiene libros sin devolver");
         }
+        if (!prestamoDAO.listarPorEstudiante(idEstudiante).isEmpty()) {
+            // Borrarlo haría perder su historial: en ese caso se desactiva la cuenta.
+            throw new ReglaNegocioException("No se puede eliminar: el estudiante tiene historial de préstamos. "
+                    + "Desactiva su cuenta en su lugar.");
+        }
         return estudianteDAO.eliminar(idEstudiante);
+    }
+
+    /** Activa o desactiva la cuenta: un estudiante inactivo no puede iniciar sesión ni pedir libros. */
+    public boolean cambiarEstadoCuenta(Persona solicitante, int idEstudiante, boolean activo) {
+        solicitante.exigirPermiso(Permiso.GESTIONAR_ESTUDIANTES);
+        Estudiante est = estudianteDAO.buscarPorId(idEstudiante)
+                .orElseThrow(() -> new ReglaNegocioException("No existe el estudiante " + idEstudiante));
+        est.getUsuario().setActivo(activo);
+        return estudianteDAO.actualizar(est);
+    }
+
+    public Optional<Estudiante> buscarEstudiantePorId(Persona solicitante, int idEstudiante) {
+        ServicioGestion.verificarAccesoAEstudiante(solicitante, idEstudiante, Permiso.CONSULTAR_PROPIOS_PRESTAMOS);
+        return estudianteDAO.buscarPorId(idEstudiante);
     }
 
     public List<Estudiante> listarEstudiantes(Persona solicitante) {
