@@ -12,8 +12,4 @@ public interface Registrable {
 
     /** @return lista de errores; vacía si los datos permiten el registro. */
     List<String> validarDatosRegistro();
-
-    default boolean esRegistrable() {
-        return validarDatosRegistro().isEmpty();
-    }
 }

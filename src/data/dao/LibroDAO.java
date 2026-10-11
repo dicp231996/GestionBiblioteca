@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface LibroDAO extends CrudDAO<Libro> {
     Optional<Libro> buscarPorIsbn(String isbn);
     List<Libro> buscarPorTitulo(String texto);
-    List<Libro> listarPorCategoria(int idCategoria);
 }

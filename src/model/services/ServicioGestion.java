@@ -7,7 +7,6 @@ import data.dao.LibroDAO;
 import data.dao.PrestamoDAO;
 import model.classification.Categoria;
 import model.core.Persona;
-import model.entities.Bibliotecario;
 import model.entities.Estudiante;
 import model.enums.Permiso;
 import model.exceptions.AccesoDenegadoException;
@@ -17,7 +16,6 @@ import model.resources.Libro;
 import model.transactions.Prestamo;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -77,24 +75,6 @@ public class ServicioGestion {
     public List<Libro> buscarLibrosPorTitulo(Persona solicitante, String texto) {
         solicitante.exigirPermiso(Permiso.CONSULTAR_CATALOGO);
         return libroDAO.buscarPorTitulo(texto);
-    }
-
-    public Optional<Libro> buscarLibroPorIsbn(Persona solicitante, String isbn) {
-        solicitante.exigirPermiso(Permiso.CONSULTAR_CATALOGO);
-        return libroDAO.buscarPorIsbn(isbn);
-    }
-
-    public Categoria registrarCategoria(Persona solicitante, Categoria categoria) {
-        solicitante.exigirPermiso(Permiso.GESTIONAR_LIBROS);
-        if (categoriaDAO.buscarPorNombre(categoria.getNombre()).isPresent()) {
-            throw new ReglaNegocioException("La categoría '" + categoria + "' ya existe");
-        }
-        return categoriaDAO.insertar(categoria);
-    }
-
-    public Optional<Libro> buscarLibroPorId(Persona solicitante, int idLibro) {
-        solicitante.exigirPermiso(Permiso.CONSULTAR_CATALOGO);
-        return libroDAO.buscarPorId(idLibro);
     }
 
     public List<Categoria> listarCategorias() {
@@ -163,20 +143,9 @@ public class ServicioGestion {
         return estudianteDAO.eliminar(idEstudiante);
     }
 
-
-    public Optional<Estudiante> buscarEstudiantePorId(Persona solicitante, int idEstudiante) {
-        ServicioGestion.verificarAccesoAEstudiante(solicitante, idEstudiante, Permiso.CONSULTAR_PROPIOS_PRESTAMOS);
-        return estudianteDAO.buscarPorId(idEstudiante);
-    }
-
     public List<Estudiante> listarEstudiantes(Persona solicitante) {
         solicitante.exigirPermiso(Permiso.GESTIONAR_ESTUDIANTES);
         return estudianteDAO.listarTodos();
-    }
-
-    public Optional<Estudiante> buscarEstudiantePorRut(Persona solicitante, String rut) {
-        solicitante.exigirPermiso(Permiso.GESTIONAR_ESTUDIANTES);
-        return estudianteDAO.buscarPorRut(rut);
     }
 
     public List<Estudiante> estudiantesConPrestamos(Persona solicitante) {
@@ -191,39 +160,11 @@ public class ServicioGestion {
                 .collect(Collectors.toList());
     }
 
-    // =================================================================== PERSONAL
-
-    public Bibliotecario registrarBibliotecario(Persona solicitante, Bibliotecario bibliotecario) {
-        solicitante.exigirPermiso(Permiso.GESTIONAR_PERSONAL);
-        validarNuevoRegistro(bibliotecario);
-        return bibliotecarioDAO.insertar(bibliotecario);
-    }
-
-    /** Solo se usa para crear el primer bibliotecario del sistema (cuando aún no hay nadie). */
-    public Bibliotecario registrarAdministradorInicial(Bibliotecario bibliotecario) {
-        if (!bibliotecarioDAO.listarTodos().isEmpty()) {
-            throw new AccesoDenegadoException("Ya existe personal registrado");
-        }
-        validarNuevoRegistro(bibliotecario);
-        return bibliotecarioDAO.insertar(bibliotecario);
-    }
-
-    public List<Bibliotecario> listarBibliotecarios(Persona solicitante) {
-        solicitante.exigirPermiso(Permiso.GESTIONAR_PERSONAL);
-        return bibliotecarioDAO.listarTodos();
-    }
-
     // =================================================================== PRÉSTAMOS (consulta)
 
     public List<Prestamo> listarPrestamosActivos(Persona solicitante) {
         solicitante.exigirPermiso(Permiso.GESTIONAR_PRESTAMOS);
         return prestamoDAO.listarActivos();
-    }
-
-    public List<Prestamo> listarPrestamosAtrasados(Persona solicitante) {
-        return listarPrestamosActivos(solicitante).stream()
-                .filter(Prestamo::estaAtrasado)
-                .collect(Collectors.toList());
     }
 
     // =================================================================== apoyo

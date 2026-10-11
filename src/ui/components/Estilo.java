@@ -29,12 +29,6 @@ public final class Estilo {
         return new JLabel(texto);
     }
 
-    public static JLabel negrita(String texto) {
-        JLabel l = new JLabel(texto);
-        l.setFont(NEGRITA);
-        return l;
-    }
-
     public static JButton boton(String texto) {
         return new JButton(texto);
     }

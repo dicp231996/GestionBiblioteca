@@ -84,7 +84,7 @@ public class Biblioteca {
             }
             Runtime.getRuntime().addShutdownHook(new Thread(() -> DatabaseConnection.getInstance().cerrar()));
 
-            // ---- Capa de datos: MySQL (para probar sin BD se pueden inyectar los DAO de data.memory)
+            // ---- Capa de datos: MySQL
             LibroDAO libroDAO = new LibroDAOMySQL();
             EstudianteDAO estudianteDAO = new EstudianteDAOMySQL();
             PrestamoDAO prestamoDAO = new PrestamoDAOMySQL(estudianteDAO, libroDAO);

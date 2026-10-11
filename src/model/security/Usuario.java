@@ -37,14 +37,6 @@ public class Usuario {
         return contrasena.equals(contrasenaIngresada);
     }
 
-    public void cambiarContrasena(String actual, String nueva) {
-        if (!verificarContrasena(actual)) {
-            throw new IllegalArgumentException("La contraseña actual no es correcta");
-        }
-        validarContrasena(nueva);
-        this.contrasena = nueva;
-    }
-
     private static void validarContrasena(String contrasena) {
         if (contrasena == null || contrasena.length() < LARGO_MINIMO_CONTRASENA) {
             throw new IllegalArgumentException(

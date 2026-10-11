@@ -51,10 +51,6 @@ public class TablaModelo<T> extends AbstractTableModel {
         return filas.get(indiceModelo);
     }
 
-    public List<T> getFilas() {
-        return List.copyOf(filas);
-    }
-
     @Override
     public int getRowCount() { return filas.size(); }
 

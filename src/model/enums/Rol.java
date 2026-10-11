@@ -26,8 +26,6 @@ public enum Rol {
         return permisos.contains(permiso);
     }
 
-    public Set<Permiso> getPermisos() { return permisos; }
-
     public String getEtiqueta() { return etiqueta; }
 
     @Override

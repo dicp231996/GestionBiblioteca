@@ -9,6 +9,5 @@ public enum Permiso {
     GESTIONAR_LIBROS,            // CRUD de libros y categorías (inventario)
     GESTIONAR_ESTUDIANTES,       // CRUD de estudiantes
     GESTIONAR_PRESTAMOS,         // préstamos/devoluciones de cualquier estudiante
-    GESTIONAR_PERSONAL,          // registrar otros bibliotecarios
     VER_REPORTES
 }

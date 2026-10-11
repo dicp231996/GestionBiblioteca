@@ -40,15 +40,6 @@ public class CampoFecha extends JFormattedTextField {
         }
     }
 
-    /** Igual que getFecha() pero sin lanzar excepción (para vistas previas mientras se escribe). */
-    public LocalDate getFechaONull() {
-        try {
-            return LocalDate.parse(getText(), FORMATO);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-
     public void setFecha(LocalDate fecha) {
         setText(fecha == null ? "" : fecha.format(FORMATO));
     }

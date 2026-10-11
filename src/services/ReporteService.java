@@ -49,15 +49,4 @@ public class ReporteService {
                 .sorted(Comparator.comparing(Prestamo::getFechaVencimiento))
                 .collect(Collectors.toList());
     }
-
-    /** Texto plano del reporte de más prestados (StringBuilder), útil para un JTextArea. */
-    public String textoLibrosMasPrestados(Persona solicitante, int top) {
-        StringBuilder sb = new StringBuilder("=== LIBROS MÁS PRESTADOS ===\n");
-        int posicion = 1;
-        for (Map.Entry<Libro, Long> e : librosMasPrestados(solicitante, top).entrySet()) {
-            sb.append(posicion++).append(". ").append(e.getKey().getTitulo())
-                    .append(" (").append(e.getValue()).append(" préstamos)\n");
-        }
-        return sb.toString();
-    }
 }

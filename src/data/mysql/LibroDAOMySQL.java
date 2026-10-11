@@ -78,11 +78,6 @@ public class LibroDAOMySQL extends ConexionMySQL implements LibroDAO {
     }
 
     @Override
-    public List<Libro> listarPorCategoria(int idCategoria) {
-        return consultar(SELECT + " WHERE l.id_categoria = ? ORDER BY l.titulo", idCategoria);
-    }
-
-    @Override
     public List<Libro> listarTodos() {
         return consultar(SELECT + " ORDER BY l.titulo");
     }

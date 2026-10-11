@@ -83,12 +83,6 @@ public class EstudianteDAOMySQL extends ConexionMySQL implements EstudianteDAO {
     }
 
     @Override
-    public List<Estudiante> listarPorCurso(Curso curso) {
-        return consultar(SELECT + " WHERE e.nivel = ? AND e.letra = ?" + ORDEN,
-                curso.getNivel().name(), String.valueOf(curso.getLetra()));
-    }
-
-    @Override
     public List<Estudiante> listarTodos() {
         return consultar(SELECT + ORDEN);
     }

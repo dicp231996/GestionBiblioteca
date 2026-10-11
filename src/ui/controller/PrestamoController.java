@@ -87,10 +87,6 @@ public class PrestamoController {
         return gestion.listarPrestamosActivos(sesion.getUsuarioActual());
     }
 
-    public List<Prestamo> atrasados() {
-        return gestion.listarPrestamosAtrasados(sesion.getUsuarioActual());
-    }
-
     /** Estudiante: su historial completo (activos primero). */
     public List<Prestamo> misPrestamos() {
         int idPropio = sesion.getUsuarioActual().getId();

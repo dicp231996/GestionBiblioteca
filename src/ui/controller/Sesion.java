@@ -1,7 +1,6 @@
 package ui.controller;
 
 import model.core.Persona;
-import model.entities.Estudiante;
 import model.enums.Permiso;
 
 import java.util.Objects;
@@ -19,10 +18,6 @@ public class Sesion {
         this.usuarioActual = null;
     }
 
-    public boolean estaIniciada() {
-        return usuarioActual != null;
-    }
-
     public Persona getUsuarioActual() {
         if (usuarioActual == null) throw new IllegalStateException("No hay una sesión iniciada");
         return usuarioActual;
@@ -30,9 +25,5 @@ public class Sesion {
 
     public boolean puede(Permiso permiso) {
         return usuarioActual != null && usuarioActual.tienePermiso(permiso);
-    }
-
-    public boolean esEstudiante() {
-        return usuarioActual instanceof Estudiante;
     }
 }
