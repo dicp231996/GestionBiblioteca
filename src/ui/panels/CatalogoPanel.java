@@ -12,6 +12,7 @@ import ui.components.Tablas;
 import ui.controller.LibroController;
 import ui.controller.PrestamoController;
 import ui.controller.Sesion;
+import ui.dialogs.CategoriasDialog;
 import ui.dialogs.LibroDialog;
 
 import javax.swing.JButton;
@@ -85,9 +86,12 @@ public class CatalogoPanel extends Seccion {
             JButton nuevo = Estilo.boton("Nuevo libro");
             JButton editar = Estilo.boton("Editar");
             JButton eliminar = Estilo.boton("Eliminar");
+            JButton categorias = Estilo.boton("Categorías");
             nuevo.addActionListener(e -> nuevo());
             editar.addActionListener(e -> editar());
             eliminar.addActionListener(e -> eliminar());
+            categorias.addActionListener(e -> categorias());
+            botones.add(categorias);
             botones.add(eliminar);
             botones.add(editar);
             botones.add(nuevo);
@@ -150,6 +154,11 @@ public class CatalogoPanel extends Seccion {
             barra.exito("Libro eliminado: " + libro.getTitulo());
             refrescar();
         }
+    }
+
+    private void categorias() {
+        new CategoriasDialog(SwingUtilities.getWindowAncestor(this), libros).setVisible(true);
+        refrescar();   // por si se renombró una categoría que aparece en la tabla
     }
 
     // ------------------------------------------------------------------ estudiante

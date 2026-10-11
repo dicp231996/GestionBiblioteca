@@ -77,8 +77,40 @@ public class ServicioGestion {
         return libroDAO.buscarPorTitulo(texto);
     }
 
+    // =================================================================== CATEGORÍAS (CRUD)
+
+    public Categoria registrarCategoria(Persona solicitante, Categoria categoria) {
+        solicitante.exigirPermiso(Permiso.GESTIONAR_LIBROS);
+        if (categoriaDAO.buscarPorNombre(categoria.getNombre()).isPresent()) {
+            throw new ReglaNegocioException("Ya existe la categoría " + categoria.getNombre());
+        }
+        return categoriaDAO.insertar(categoria);
+    }
+
     public List<Categoria> listarCategorias() {
         return categoriaDAO.listarTodos();
+    }
+
+    public boolean actualizarCategoria(Persona solicitante, Categoria categoria) {
+        solicitante.exigirPermiso(Permiso.GESTIONAR_LIBROS);
+        categoriaDAO.buscarPorNombre(categoria.getNombre())
+                .filter(otra -> otra.getId() != categoria.getId())
+                .ifPresent(otra -> {
+                    throw new ReglaNegocioException("Ya existe la categoría " + categoria.getNombre());
+                });
+        return categoriaDAO.actualizar(categoria);
+    }
+
+    public boolean eliminarCategoria(Persona solicitante, int idCategoria) {
+        solicitante.exigirPermiso(Permiso.GESTIONAR_LIBROS);
+        long librosQueLaUsan = libroDAO.listarTodos().stream()
+                .filter(l -> l.getCategoria().getId() == idCategoria)
+                .count();
+        if (librosQueLaUsan > 0) {
+            throw new ReglaNegocioException("No se puede eliminar: hay " + librosQueLaUsan
+                    + " libro(s) en esta categoría. Cámbialos de categoría primero.");
+        }
+        return categoriaDAO.eliminar(idCategoria);
     }
 
     // =================================================================== STOCK (sección crítica)

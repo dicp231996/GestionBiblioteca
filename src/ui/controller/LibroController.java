@@ -47,4 +47,16 @@ public class LibroController {
     public List<Categoria> categorias() {
         return gestion.listarCategorias();
     }
+
+    public Categoria registrarCategoria(Categoria categoria) {
+        return gestion.registrarCategoria(sesion.getUsuarioActual(), categoria);
+    }
+
+    public void actualizarCategoria(Categoria categoria) {
+        gestion.actualizarCategoria(sesion.getUsuarioActual(), categoria);
+    }
+
+    public void eliminarCategoria(Categoria categoria) {
+        gestion.eliminarCategoria(sesion.getUsuarioActual(), categoria.getId());
+    }
 }
